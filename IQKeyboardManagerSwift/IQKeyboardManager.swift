@@ -624,35 +624,30 @@ Codeless drop-in universal library allows to prevent issues of keyboard sliding 
         }
     }
     
-    /**	doneAction. Resigning current textField. */
-    @objc internal func doneAction (_ barButton : IQBarButtonItem) {
-        
-        //If user wants to play input Click sound.
-        if shouldPlayInputClicks == true {
-            //Play Input Click Sound.
-            UIDevice.current.playInputClick()
-        }
-        
-        if let textFieldRetain = _textFieldView {
-            //Resign textFieldView.
-            let isResignedFirstResponder = resignFirstResponder()
-            
-            var invocation = barButton.invocation
-            var sender = textFieldRetain
+	/**	doneAction. Resigning current textField. */
+	@objc internal func doneAction (_ barButton : IQBarButtonItem) {
 
-            //Handling search bar special case
-            do {
-                if let searchBar = textFieldRetain.textFieldSearchBar() {
-                    invocation = searchBar.keyboardToolbar.doneBarButton.invocation
-                    sender = searchBar
-                }
-            }
+		//If user wants to play input Click sound.
+		if shouldPlayInputClicks == true {
+			//Play Input Click Sound.
+			UIDevice.current.playInputClick()
+		}
 
-            if isResignedFirstResponder {
-                invocation?.invoke(from: sender)
-            }
-        }
-    }
+		if let textFieldRetain = _textFieldView {
+			var invocation = barButton.invocation
+			var sender = textFieldRetain
+
+			//Handling search bar special case
+			do {
+				if let searchBar = textFieldRetain.textFieldSearchBar() {
+					invocation = searchBar.keyboardToolbar.doneBarButton.invocation
+					sender = searchBar
+				}
+			}
+			invocation?.invoke(from: sender)
+			resignFirstResponder()
+		}
+	}
     
     /** Resigning on tap gesture.   (Enhancement ID: #14)*/
     @objc internal func tapRecognized(_ gesture: UITapGestureRecognizer) {
